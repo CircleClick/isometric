@@ -113,14 +113,14 @@ for (let index = 0; index < cubesArray.length; index++) {
 		child.material.opacity = 0;
 	}
 
-	const offset = ((index+1)/cubesArray.length);
+	const offset = ((cubesArray.length-index)/cubesArray.length);
 	console.log(offset)
 	setTimeout(()=>{
 		for (let i = 0; i < element.children.length; i++) {
 			const child = element.children[i];
 			child.material.opacity = 1;
 		}
-	}, offset*10000);
+	}, (1 - offset*offset)*6000);
 }
 
 scene.updateMatrixWorld();

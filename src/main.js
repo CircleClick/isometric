@@ -120,7 +120,7 @@ for (let index = 0; index < cubesArray.length; index++) {
 			const child = element.children[i];
 			child.material.opacity = 1;
 		}
-	}, offset*offset*4000);
+	}, offset*10000);
 }
 
 scene.updateMatrixWorld();

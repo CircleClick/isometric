@@ -37,7 +37,7 @@ const getDist = function (ax, ay, bx, by, max = 0) {
 }
 
 const cubes_x = 10;
-const cubes_y = 6;
+const cubes_y = 8;
 const dullDistance = 3;
 const cubesArray = new Array();
 const facesArray = new Array();
@@ -53,10 +53,11 @@ for (let y = 0; y < cubes_y; y++) {
 		let leftPlane = null;
 		let rightPlane = null;
 		let topPlane = null;
-		const distFromCenter = getDist(0,0,group.position.x,group.position.y)
+		const distanceFromCenter = getDist(0,0,group.position.x,group.position.y);
+		group.distanceFromCenter = distanceFromCenter;
 
-		if (distFromCenter < dullDistance) {
-			const chance = distFromCenter/dullDistance;
+		if (distanceFromCenter < dullDistance) {
+			const chance = distanceFromCenter/dullDistance;
 			leftPlane = new THREE.Mesh(planeGeom, RandomMaterial(chance*chance*chance));
 			rightPlane = new THREE.Mesh(planeGeom, RandomMaterial(chance*chance*chance));
 			topPlane = new THREE.Mesh(planeGeom, RandomMaterial(chance*chance*chance));
@@ -102,9 +103,29 @@ for (let y = 0; y < cubes_y; y++) {
 	}
 }
 
+cubesArray.sort((a,b)=>{
+	return a.distanceFromCenter - b.distanceFromCenter;
+})
+for (let index = 0; index < cubesArray.length; index++) {
+	const element = cubesArray[index];
+	for (let i = 0; i < element.children.length; i++) {
+		const child = element.children[i];
+		child.material.opacity = 0;
+	}
+
+	const offset = ((index+1)/cubesArray.length);
+	console.log(offset)
+	setTimeout(()=>{
+		for (let i = 0; i < element.children.length; i++) {
+			const child = element.children[i];
+			child.material.opacity = 1;
+		}
+	}, offset*offset*4000);
+}
+
 scene.updateMatrixWorld();
 
-for (let i = 0; i < facesArray.length; i++) {
+/*for (let i = 0; i < facesArray.length; i++) {
 	const baseFace = facesArray[i];
 	const vect = new THREE.Vector3();
 	vect.setFromMatrixPosition(baseFace.matrixWorld);
@@ -126,7 +147,7 @@ for (let i = 0; i < facesArray.length; i++) {
 			}
 		}
 	}
-}
+}*/
 
 const raycaster = new THREE.Raycaster();
 const mouse = new THREE.Vector2();

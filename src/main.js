@@ -37,21 +37,21 @@ const getDist = function (ax, ay, bx, by, max = 0) {
 }
 
 class Cube {
-	constructor (x = 0, y = 0, z = 0) {
+	constructor(x = 0, y = 0, z = 0) {
 		this.group = new THREE.Group();
 		this.group.position.x = x;
 		this.group.position.y = y;
 		this.group.position.z = z;
 		this.group.rotation.y = Math.PI;
 
-		const distFromCenter = getDist(0,0,x,y)
+		const distFromCenter = getDist(0, 0, x, y)
 		this.distFromCenter = distFromCenter;
 
 		if (distFromCenter < dullDistance) {
-			const chance = distFromCenter/dullDistance;
-			this.leftPlane = new THREE.Mesh(planeGeom, RandomMaterial(chance*chance*chance));
-			this.rightPlane = new THREE.Mesh(planeGeom, RandomMaterial(chance*chance*chance));
-			this.topPlane = new THREE.Mesh(planeGeom, RandomMaterial(chance*chance*chance));
+			const chance = distFromCenter / dullDistance;
+			this.leftPlane = new THREE.Mesh(planeGeom, RandomMaterial(chance * chance * chance));
+			this.rightPlane = new THREE.Mesh(planeGeom, RandomMaterial(chance * chance * chance));
+			this.topPlane = new THREE.Mesh(planeGeom, RandomMaterial(chance * chance * chance));
 		} else {
 			this.leftPlane = new THREE.Mesh(planeGeom, DullMaterial());
 			this.rightPlane = new THREE.Mesh(planeGeom, DullMaterial());
@@ -81,40 +81,51 @@ class Cube {
 		this.group.add(this.topPlane);
 
 
-		this.leftPlane.restingPosition = {x: this.leftPlane.position.x, y: this.leftPlane.position.y, z: this.leftPlane.position.z};
-		this.leftPlane.restingRotation = {x: this.leftPlane.rotation.x, y: this.leftPlane.rotation.y, z: this.leftPlane.rotation.z};
+		this.leftPlane.restingPosition = { x: this.leftPlane.position.x, y: this.leftPlane.position.y, z: this.leftPlane.position.z };
+		this.leftPlane.restingRotation = { x: this.leftPlane.rotation.x, y: this.leftPlane.rotation.y, z: this.leftPlane.rotation.z };
 
-		this.rightPlane.restingPosition = {x: this.rightPlane.position.x, y: this.rightPlane.position.y, z: this.rightPlane.position.z};
-		this.rightPlane.restingRotation = {x: this.rightPlane.rotation.x, y: this.rightPlane.rotation.y, z: this.rightPlane.rotation.z};
+		this.rightPlane.restingPosition = { x: this.rightPlane.position.x, y: this.rightPlane.position.y, z: this.rightPlane.position.z };
+		this.rightPlane.restingRotation = { x: this.rightPlane.rotation.x, y: this.rightPlane.rotation.y, z: this.rightPlane.rotation.z };
 
-		this.topPlane.restingPosition = {x: this.topPlane.position.x, y: this.topPlane.position.y, z: this.topPlane.position.z};
-		this.topPlane.restingRotation = {x: this.topPlane.rotation.x, y: this.topPlane.rotation.y, z: this.topPlane.rotation.z};
+		this.topPlane.restingPosition = { x: this.topPlane.position.x, y: this.topPlane.position.y, z: this.topPlane.position.z };
+		this.topPlane.restingRotation = { x: this.topPlane.rotation.x, y: this.topPlane.rotation.y, z: this.topPlane.rotation.z };
 
 		this.leftPlane.cube = this;
 		this.rightPlane.cube = this;
 		this.topPlane.cube = this;
 
-		this.animationProgress = -distFromCenter*0.3;
+		this.animationProgress = -distFromCenter * 0.3 - 5;
 	}
 
-	tick (delta) {
+	tick(delta) {
 		this.animationProgress += delta;
 
 		let animationBounded = this.animationProgress;
 
 
 
-		if(animationBounded > 0.75) {
+		if (animationBounded > 0.75) {
+			this.topPlane.position.x = this.topPlane.restingPosition.x;
 			this.topPlane.position.y = this.topPlane.restingPosition.y;
+			this.topPlane.position.z = this.topPlane.restingPosition.z;
+
 			this.rightPlane.position.x = this.rightPlane.restingPosition.x;
+			this.rightPlane.position.y = this.rightPlane.restingPosition.y;
+			this.rightPlane.position.z = this.rightPlane.restingPosition.z;
+
 			this.leftPlane.position.x = this.leftPlane.restingPosition.x;
+			this.leftPlane.position.y = this.leftPlane.restingPosition.y;
+			this.leftPlane.position.z = this.leftPlane.restingPosition.z;
+
 			return;
 		}
 		if (animationBounded >= 0) {
-			const anim = (animationBounded)/0.75;
-			this.topPlane.position.y = this.topPlane.restingPosition.y + (0.2 * Math.sin(Math.PI*(anim)));
-			this.rightPlane.position.x = this.rightPlane.restingPosition.x + (0.2 * Math.sin(Math.PI*(anim)));
-			this.leftPlane.position.x = this.leftPlane.restingPosition.x + (0.2 * Math.sin(Math.PI*-(anim)));
+			const anim = (animationBounded) / 0.75;
+			this.topPlane.position.y = this.topPlane.restingPosition.y + (0.2 * Math.sin(Math.PI * (anim)));
+			this.rightPlane.position.x = this.rightPlane.restingPosition.x + (0.2 * Math.sin(Math.PI * (anim)));
+			this.rightPlane.position.z = this.rightPlane.restingPosition.z - (0.2 * Math.sin(Math.PI * (anim)));
+			this.leftPlane.position.x = this.leftPlane.restingPosition.x + (0.2 * Math.sin(Math.PI * -(anim)));
+			this.leftPlane.position.z = this.leftPlane.restingPosition.z + (0.2 * Math.sin(Math.PI * -(anim)));
 		}
 	}
 }
@@ -126,12 +137,12 @@ const cubesArray = new Array();
 let facesArray = new Array();
 for (let y = 0; y < cubes_y; y++) {
 	for (let x = 0; x < cubes_x; x++) {
-		
+
 		const xx = ((x - cubes_x / 2) + (y % 2 !== 0 ? 0.5 : 0)) * 1.41;
 		const yy = (y - cubes_y / 2);
 		const zz = -(y - cubes_y / 2) / 1.42;
 
-		const cube = new Cube(xx,yy,zz);
+		const cube = new Cube(xx, yy, zz);
 		scene.add(cube.group);
 
 		facesArray.push(cube.leftPlane, cube.rightPlane, cube.topPlane);
@@ -139,7 +150,7 @@ for (let y = 0; y < cubes_y; y++) {
 	}
 }
 
-facesArray = facesArray.sort((a,b) => {
+facesArray = facesArray.sort((a, b) => {
 	return getDist(a.position.x, a.position.y, 0, 0) - getDist(b.position.x, b.position.y, 0, 0)
 })
 
@@ -222,7 +233,7 @@ let lastFrame = Date.now();
 const draw = () => {
 	requestAnimationFrame(draw);
 
-	const delta = Math.min(1, (Date.now() - lastFrame)/1000);
+	const delta = Math.min(1, (Date.now() - lastFrame) / 1000);
 	lastFrame = Date.now();
 
 	for (let index = 0; index < facesArray.length; index++) {

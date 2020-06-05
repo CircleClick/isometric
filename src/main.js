@@ -97,12 +97,16 @@ class Cube {
 
 	tick (delta) {
 		this.timeUntilAnimationStart -= delta;
-		if (this.timeUntilAnimationStart <= 0 && this.animationProgress < 2) {
-			this.animationProgress += delta*3;
+		if (this.timeUntilAnimationStart <= 0 && this.animationProgress < 1) {
+			this.animationProgress += delta*1.5;
 
-			this.topPlane.position.y = this.topPlane.restingPosition.y + (0.01 * Math.sin(Math.PI*this.animationProgress));
-			this.rightPlane.position.x = this.rightPlane.restingPosition.x + (0.01 * Math.sin(Math.PI*this.animationProgress));
-			this.leftPlane.position.x = this.leftPlane.restingPosition.x + (0.01 * Math.sin(Math.PI*-this.animationProgress));
+			this.topPlane.position.y = this.topPlane.restingPosition.y + (0.01 * Math.sin(Math.PI*this.animationProgress*2));
+			this.rightPlane.position.x = this.rightPlane.restingPosition.x + (0.01 * Math.sin(Math.PI*this.animationProgress*2));
+			this.leftPlane.position.x = this.leftPlane.restingPosition.x + (0.01 * Math.sin(Math.PI*-this.animationProgress*2));
+		}
+		if (this.animationProgress >= 1) {
+			this.animationProgress = 0;
+			this.timeUntilAnimationStart += 5
 		}
 	}
 }

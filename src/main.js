@@ -4,6 +4,8 @@ import { RandomMaterial, DullMaterial } from './RandomMaterial';
 
 const scene = new THREE.Scene();
 
+const animationEndThreshold = 0.75;
+
 const frustumSize = 6;
 let aspect = window.innerWidth / window.innerHeight;
 //const camera = new THREE.PerspectiveCamera(72, window.innerHeight/window.innerWidth, 1, 1000);
@@ -94,7 +96,7 @@ class Cube {
 		this.rightPlane.cube = this;
 		this.topPlane.cube = this;
 
-		this.animationProgress = -distFromCenter * 0.3 - 5;
+		this.animationProgress = -distFromCenter * 0.3 - 3;
 	}
 
 	tick(delta) {
@@ -104,7 +106,7 @@ class Cube {
 
 
 
-		if (animationBounded > 0.75) {
+		if (animationBounded > animationEndThreshold) {
 			this.topPlane.position.x = this.topPlane.restingPosition.x;
 			this.topPlane.position.y = this.topPlane.restingPosition.y;
 			this.topPlane.position.z = this.topPlane.restingPosition.z;
@@ -120,7 +122,7 @@ class Cube {
 			return;
 		}
 		if (animationBounded >= 0) {
-			const anim = (animationBounded) / 0.75;
+			const anim = (animationBounded) / animationEndThreshold;
 			this.topPlane.position.y = this.topPlane.restingPosition.y + (0.2 * Math.sin(Math.PI * (anim)));
 			this.rightPlane.position.x = this.rightPlane.restingPosition.x + (0.2 * Math.sin(Math.PI * (anim)));
 			this.rightPlane.position.z = this.rightPlane.restingPosition.z - (0.2 * Math.sin(Math.PI * (anim)));
@@ -205,7 +207,8 @@ window.addEventListener('click', () => {
 	const intersects = raycaster.intersectObjects(facesArray);
 	for (let i = 0; i < intersects.length; i++) {
 		intersects[i].object.material = RandomMaterial(false);
-		intersects[i].object.cube.animationProgress = 0;
+		console.log(intersects[i].object.cube.animationProgress)
+		if (intersects[i].object.cube.animationProgress >= animationEndThreshold) intersects[i].object.cube.animationProgress = 0;
 	}
 })
 

@@ -2,7 +2,7 @@ import THREE from 'three.js';
 
 const dullImages = [
 	require('./img/border.png'),
-	require('./img/border2.png'),
+	//require('./img/border2.png'),
 ];
 
 const images = [

@@ -91,21 +91,27 @@ class Cube {
 		this.topPlane.restingRotation = this.topPlane.rotation;
 
 
-		this.timeUntilAnimationStart = distFromCenter*0.25+3;
+		this.timeUntilAnimationStart = distFromCenter*0.25+1;
 		this.animationProgress = 0;
 	}
 
 	tick (delta) {
-		this.timeUntilAnimationStart -= delta;
+		if (this.timeUntilAnimationStart > 0) this.timeUntilAnimationStart -= delta;
+
 		if (this.timeUntilAnimationStart <= 0 && this.animationProgress < 1) {
 			this.animationProgress += delta*1.5;
 
 			this.topPlane.position.y = this.topPlane.restingPosition.y + (0.01 * Math.sin(Math.PI*this.animationProgress*2));
 			this.rightPlane.position.x = this.rightPlane.restingPosition.x + (0.01 * Math.sin(Math.PI*this.animationProgress*2));
 			this.leftPlane.position.x = this.leftPlane.restingPosition.x + (0.01 * Math.sin(Math.PI*-this.animationProgress*2));
+		} else {
+			this.topPlane.position.y = this.topPlane.restingPosition.y;
+			this.rightPlane.position.x = this.rightPlane.restingPosition.x;
+			this.leftPlane.position.x = this.leftPlane.restingPosition.x;
 		}
+
 		if (this.animationProgress >= 1) {
-			this.animationProgress = 0;
+			this.animationProgress -= 1;
 			this.timeUntilAnimationStart += 5
 		}
 	}
@@ -213,7 +219,7 @@ let lastFrame = Date.now();
 const draw = () => {
 	requestAnimationFrame(draw);
 
-	const delta = (Date.now() - lastFrame)/1000;
+	const delta = Math.min(1, (Date.now() - lastFrame)/1000);
 	lastFrame = Date.now();
 
 	for (let index = 0; index < facesArray.length; index++) {

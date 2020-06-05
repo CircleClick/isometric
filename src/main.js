@@ -81,14 +81,14 @@ class Cube {
 		this.group.add(this.topPlane);
 
 
-		this.leftPlane.restingPosition = this.leftPlane.position;
-		this.leftPlane.restingRotation = this.leftPlane.rotation;
+		this.leftPlane.restingPosition = {x: this.leftPlane.position.x, y: this.leftPlane.position.y, z: this.leftPlane.position.z};
+		this.leftPlane.restingRotation = {x: this.leftPlane.rotation.x, y: this.leftPlane.rotation.y, z: this.leftPlane.rotation.z};
 
-		this.rightPlane.restingPosition = this.rightPlane.position;
-		this.rightPlane.restingRotation = this.rightPlane.rotation;
+		this.rightPlane.restingPosition = {x: this.rightPlane.position.x, y: this.rightPlane.position.y, z: this.rightPlane.position.z};
+		this.rightPlane.restingRotation = {x: this.rightPlane.rotation.x, y: this.rightPlane.rotation.y, z: this.rightPlane.rotation.z};
 
-		this.topPlane.restingPosition = this.topPlane.position;
-		this.topPlane.restingRotation = this.topPlane.rotation;
+		this.topPlane.restingPosition = {x: this.topPlane.position.x, y: this.topPlane.position.y, z: this.topPlane.position.z};
+		this.topPlane.restingRotation = {x: this.topPlane.rotation.x, y: this.topPlane.rotation.y, z: this.topPlane.rotation.z};
 
 
 		this.timeUntilAnimationStart = distFromCenter*0.25;
@@ -102,12 +102,16 @@ class Cube {
 		while(animationBounded > 3) {
 			animationBounded -= 3;
 		}
-		if (animationBounded >= 2) {
-			const anim = animationBounded - 2;
+		if (animationBounded >= 2.25) {
+			const anim = (animationBounded - 2.25)/0.75;
 
-			this.topPlane.position.y = this.topPlane.restingPosition.y + (0.01 * Math.sin(Math.PI*(anim)*2));
-			this.rightPlane.position.x = this.rightPlane.restingPosition.x + (0.01 * Math.sin(Math.PI*(anim)*2));
-			this.leftPlane.position.x = this.leftPlane.restingPosition.x + (0.01 * Math.sin(Math.PI*-(anim)*2));
+			this.topPlane.position.y = this.topPlane.restingPosition.y + (0.2 * Math.sin(Math.PI*(anim)));
+			this.rightPlane.position.x = this.rightPlane.restingPosition.x + (0.2 * Math.sin(Math.PI*(anim)));
+			this.leftPlane.position.x = this.leftPlane.restingPosition.x + (0.2 * Math.sin(Math.PI*-(anim)));
+		} else {
+			this.topPlane.position.y = this.topPlane.restingPosition.y;
+			this.rightPlane.position.x = this.rightPlane.restingPosition.x;
+			this.leftPlane.position.x = this.leftPlane.restingPosition.x;
 		}
 	}
 }

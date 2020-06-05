@@ -101,19 +101,20 @@ class Cube {
 		this.animationProgress += delta;
 
 		let animationBounded = this.animationProgress;
-		while(animationBounded > 3) {
-			animationBounded -= 3;
-		}
-		if (animationBounded >= 2.25) {
-			const anim = (animationBounded - 2.25)/0.75;
 
-			this.topPlane.position.y = this.topPlane.restingPosition.y + (0.2 * Math.sin(Math.PI*(anim)));
-			this.rightPlane.position.x = this.rightPlane.restingPosition.x + (0.2 * Math.sin(Math.PI*(anim)));
-			this.leftPlane.position.x = this.leftPlane.restingPosition.x + (0.2 * Math.sin(Math.PI*-(anim)));
-		} else {
+
+
+		if(animationBounded > 0.75) {
 			this.topPlane.position.y = this.topPlane.restingPosition.y;
 			this.rightPlane.position.x = this.rightPlane.restingPosition.x;
 			this.leftPlane.position.x = this.leftPlane.restingPosition.x;
+			return;
+		}
+		if (animationBounded >= 0) {
+			const anim = (animationBounded)/0.75;
+			this.topPlane.position.y = this.topPlane.restingPosition.y + (0.2 * Math.sin(Math.PI*(anim)));
+			this.rightPlane.position.x = this.rightPlane.restingPosition.x + (0.2 * Math.sin(Math.PI*(anim)));
+			this.leftPlane.position.x = this.leftPlane.restingPosition.x + (0.2 * Math.sin(Math.PI*-(anim)));
 		}
 	}
 }
@@ -193,6 +194,7 @@ window.addEventListener('click', () => {
 	const intersects = raycaster.intersectObjects(facesArray);
 	for (let i = 0; i < intersects.length; i++) {
 		intersects[i].object.material = RandomMaterial(false);
+		intersects[i].object.cube.animationProgress = 0;
 	}
 })
 

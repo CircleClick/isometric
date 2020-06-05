@@ -36,96 +36,112 @@ const getDist = function (ax, ay, bx, by, max = 0) {
 	return Math.sqrt(a * a + b * b);
 }
 
+class Cube {
+	constructor (x = 0, y = 0, z = 0) {
+		this.group = new THREE.Group();
+		this.group.position.x = x;
+		this.group.position.y = y;
+		this.group.position.z = z;
+		this.group.rotation.y = Math.PI;
+
+		const distFromCenter = getDist(0,0,x,y)
+		this.distFromCenter = distFromCenter;
+
+		if (distFromCenter < dullDistance) {
+			const chance = distFromCenter/dullDistance;
+			this.leftPlane = new THREE.Mesh(planeGeom, RandomMaterial(chance*chance*chance));
+			this.rightPlane = new THREE.Mesh(planeGeom, RandomMaterial(chance*chance*chance));
+			this.topPlane = new THREE.Mesh(planeGeom, RandomMaterial(chance*chance*chance));
+		} else {
+			this.leftPlane = new THREE.Mesh(planeGeom, DullMaterial());
+			this.rightPlane = new THREE.Mesh(planeGeom, DullMaterial());
+			this.topPlane = new THREE.Mesh(planeGeom, DullMaterial());
+		}
+
+		this.leftPlane.neighbors = new Array();
+		this.leftPlane.position.x = -0.3525;
+		this.leftPlane.position.z = -0.3525;
+		this.leftPlane.rotation.y = Math.PI / 4;
+		this.leftPlane.rotation.y += Math.PI;
+		this.group.add(this.leftPlane);
+
+		this.rightPlane.neighbors = new Array();
+		this.rightPlane.position.x = 0.3525;
+		this.rightPlane.position.z = -0.3525;
+		this.rightPlane.rotation.y = -Math.PI / 4;
+		this.rightPlane.rotation.y += Math.PI;
+		this.group.add(this.rightPlane);
+
+		this.topPlane.neighbors = new Array();
+		this.topPlane.position.x = 0;
+		this.topPlane.position.y = +0.5;
+		this.topPlane.rotation.x = Math.PI / 2;
+		this.topPlane.rotation.z = Math.PI / 4;
+		this.topPlane.rotation.y = Math.PI;
+		this.group.add(this.topPlane);
+
+
+		this.leftPlane.restingPosition = this.leftPlane.position;
+		this.leftPlane.restingRotation = this.leftPlane.rotation;
+
+		this.rightPlane.restingPosition = this.rightPlane.position;
+		this.rightPlane.restingRotation = this.rightPlane.rotation;
+
+		this.topPlane.restingPosition = this.topPlane.position;
+		this.topPlane.restingRotation = this.topPlane.rotation;
+
+
+		this.timeUntilAnimationStart = distFromCenter*0.25+3;
+		this.animationProgress = 0;
+	}
+
+	tick (delta) {
+		this.timeUntilAnimationStart -= delta;
+		if (this.timeUntilAnimationStart <= 0 && this.animationProgress < 2) {
+			this.animationProgress += delta*3;
+
+			this.topPlane.position.y = this.topPlane.restingPosition.y + (0.01 * Math.sin(Math.PI*this.animationProgress));
+			this.rightPlane.position.x = this.rightPlane.restingPosition.x + (0.01 * Math.sin(Math.PI*this.animationProgress));
+			this.leftPlane.position.x = this.leftPlane.restingPosition.x + (0.01 * Math.sin(Math.PI*-this.animationProgress));
+		}
+	}
+}
+
 const cubes_x = 10;
-const cubes_y = 8;
+const cubes_y = 7;
 const dullDistance = 3;
 const cubesArray = new Array();
-const facesArray = new Array();
+let facesArray = new Array();
 for (let y = 0; y < cubes_y; y++) {
 	for (let x = 0; x < cubes_x; x++) {
-		const group = new THREE.Group();
-		group.position.x = ((x - cubes_x / 2) + (y % 2 !== 0 ? 0.5 : 0)) * 1.41;
-		group.position.y = (y - cubes_y / 2);
-		group.position.z = -(y - cubes_y / 2) / 1.42;
-		group.neighbors = new Array();
-		group.rotation.y = Math.PI;
+		
+		const xx = ((x - cubes_x / 2) + (y % 2 !== 0 ? 0.5 : 0)) * 1.41;
+		const yy = (y - cubes_y / 2);
+		const zz = -(y - cubes_y / 2) / 1.42;
 
-		let leftPlane = null;
-		let rightPlane = null;
-		let topPlane = null;
-		const distanceFromCenter = getDist(0,0,group.position.x,group.position.y);
-		group.distanceFromCenter = distanceFromCenter;
+		const cube = new Cube(xx,yy,zz);
+		scene.add(cube.group);
 
-		if (distanceFromCenter < dullDistance) {
-			const chance = distanceFromCenter/dullDistance;
-			leftPlane = new THREE.Mesh(planeGeom, RandomMaterial(chance*chance*chance));
-			rightPlane = new THREE.Mesh(planeGeom, RandomMaterial(chance*chance*chance));
-			topPlane = new THREE.Mesh(planeGeom, RandomMaterial(chance*chance*chance));
-	
-		} else {
-			leftPlane = new THREE.Mesh(planeGeom, DullMaterial());
-			rightPlane = new THREE.Mesh(planeGeom, DullMaterial());
-			topPlane = new THREE.Mesh(planeGeom, DullMaterial());
-		}
-
-		leftPlane.neighbors = new Array();
-		leftPlane.position.x = -0.3525;
-		leftPlane.position.z = -0.3525;
-		leftPlane.rotation.y = Math.PI / 4;
-		leftPlane.rotation.y += Math.PI;
-		group.add(leftPlane);
-
-		rightPlane.neighbors = new Array();
-		rightPlane.position.x = 0.3525;
-		rightPlane.position.z = -0.3525;
-		rightPlane.rotation.y = -Math.PI / 4;
-		rightPlane.rotation.y += Math.PI;
-		group.add(rightPlane);
-
-		topPlane.neighbors = new Array();
-		topPlane.position.x = 0;
-		topPlane.position.y = +0.5;
-		topPlane.rotation.x = Math.PI / 2;
-		topPlane.rotation.z = Math.PI / 4;
-		topPlane.rotation.y = Math.PI;
-		group.add(topPlane);
-
-		scene.add(group);
-		/*for (let index = 0; index < cubesArray.length; index++) {
-			const cube = cubesArray[index];
-			if (getDist(cube.position.x, cube.position.y, group.position.x, group.position.y) < 2) {
-				cube.neighbors.push(group);
-				group.neighbors.push(cube);
-			}
-		}*/
-		facesArray.push(leftPlane, rightPlane, topPlane);
-		cubesArray.push(group);
+		facesArray.push(cube.leftPlane, cube.rightPlane, cube.topPlane);
+		cubesArray.push(cube);
 	}
 }
 
-cubesArray.sort((a,b)=>{
-	return a.distanceFromCenter - b.distanceFromCenter;
+facesArray = facesArray.sort((a,b) => {
+	return getDist(a.position.x, a.position.y, 0, 0) - getDist(b.position.x, b.position.y, 0, 0)
 })
-for (let index = 0; index < cubesArray.length; index++) {
-	const element = cubesArray[index];
-	for (let i = 0; i < element.children.length; i++) {
-		const child = element.children[i];
-		child.material.opacity = 0;
-	}
-
-	const offset = ((cubesArray.length-index)/cubesArray.length);
-	console.log(offset)
-	setTimeout(()=>{
-		for (let i = 0; i < element.children.length; i++) {
-			const child = element.children[i];
-			child.material.opacity = 1;
-		}
-	}, (1 - offset*offset)*6000);
-}
 
 scene.updateMatrixWorld();
 
 /*for (let i = 0; i < facesArray.length; i++) {
+	const face = facesArray[i];
+	setTimeout(()=>{
+		face.ztarget = face.position.z;
+		face.position.z += 100;
+	}, i*250)
+}*/
+
+for (let i = 0; i < facesArray.length; i++) {
 	const baseFace = facesArray[i];
 	const vect = new THREE.Vector3();
 	vect.setFromMatrixPosition(baseFace.matrixWorld);
@@ -147,7 +163,7 @@ scene.updateMatrixWorld();
 			}
 		}
 	}
-}*/
+}
 
 const raycaster = new THREE.Raycaster();
 const mouse = new THREE.Vector2();
@@ -189,13 +205,22 @@ window.addEventListener('resize', () => {
 })
 document.body.appendChild(renderer.domElement);
 
+let lastFrame = Date.now();
 const draw = () => {
 	requestAnimationFrame(draw);
+
+	const delta = (Date.now() - lastFrame)/1000;
+	lastFrame = Date.now();
 
 	for (let index = 0; index < facesArray.length; index++) {
 		const element = facesArray[index];
 		element.material.color.set(0xffffff);
 	}
+	for (let index = 0; index < cubesArray.length; index++) {
+		const cube = cubesArray[index];
+		cube.tick(delta);
+	}
+
 
 	/*raycaster.setFromCamera(mouse, camera);
 	const intersects = raycaster.intersectObjects(facesArray);

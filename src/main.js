@@ -91,28 +91,23 @@ class Cube {
 		this.topPlane.restingRotation = this.topPlane.rotation;
 
 
-		this.timeUntilAnimationStart = distFromCenter*0.25+1;
-		this.animationProgress = 0;
+		this.timeUntilAnimationStart = distFromCenter*0.25;
+		this.animationProgress = -distFromCenter*0.2;
 	}
 
 	tick (delta) {
-		if (this.timeUntilAnimationStart > 0) this.timeUntilAnimationStart -= delta;
+		this.animationProgress += delta;
 
-		if (this.timeUntilAnimationStart <= 0 && this.animationProgress < 1) {
-			this.animationProgress += delta*1.5;
-
-			this.topPlane.position.y = this.topPlane.restingPosition.y + (0.01 * Math.sin(Math.PI*this.animationProgress*2));
-			this.rightPlane.position.x = this.rightPlane.restingPosition.x + (0.01 * Math.sin(Math.PI*this.animationProgress*2));
-			this.leftPlane.position.x = this.leftPlane.restingPosition.x + (0.01 * Math.sin(Math.PI*-this.animationProgress*2));
-		} else {
-			this.topPlane.position.y = this.topPlane.restingPosition.y;
-			this.rightPlane.position.x = this.rightPlane.restingPosition.x;
-			this.leftPlane.position.x = this.leftPlane.restingPosition.x;
+		let animationBounded = this.animationProgress;
+		while(animationBounded > 3) {
+			animationBounded -= 3;
 		}
+		if (animationBounded >= 2) {
+			const anim = animationBounded - 2;
 
-		if (this.animationProgress >= 1) {
-			this.animationProgress -= 1;
-			this.timeUntilAnimationStart += 5
+			this.topPlane.position.y = this.topPlane.restingPosition.y + (0.01 * Math.sin(Math.PI*(anim)*2));
+			this.rightPlane.position.x = this.rightPlane.restingPosition.x + (0.01 * Math.sin(Math.PI*(anim)*2));
+			this.leftPlane.position.x = this.leftPlane.restingPosition.x + (0.01 * Math.sin(Math.PI*-(anim)*2));
 		}
 	}
 }

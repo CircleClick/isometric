@@ -59,15 +59,15 @@ class Cube {
 		}
 
 		this.leftPlane.neighbors = new Array();
-		this.leftPlane.position.x = -0.3525;
-		this.leftPlane.position.z = -0.3525;
+		this.leftPlane.position.x = -0.3523;
+		this.leftPlane.position.z = -0.3523;
 		this.leftPlane.rotation.y = Math.PI / 4;
 		this.leftPlane.rotation.y += Math.PI;
 		this.group.add(this.leftPlane);
 
 		this.rightPlane.neighbors = new Array();
-		this.rightPlane.position.x = 0.3525;
-		this.rightPlane.position.z = -0.3525;
+		this.rightPlane.position.x = 0.3523;
+		this.rightPlane.position.z = -0.3523;
 		this.rightPlane.rotation.y = -Math.PI / 4;
 		this.rightPlane.rotation.y += Math.PI;
 		this.group.add(this.rightPlane);

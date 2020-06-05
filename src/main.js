@@ -90,9 +90,11 @@ class Cube {
 		this.topPlane.restingPosition = {x: this.topPlane.position.x, y: this.topPlane.position.y, z: this.topPlane.position.z};
 		this.topPlane.restingRotation = {x: this.topPlane.rotation.x, y: this.topPlane.rotation.y, z: this.topPlane.rotation.z};
 
+		this.leftPlane.cube = this;
+		this.rightPlane.cube = this;
+		this.topPlane.cube = this;
 
-		this.timeUntilAnimationStart = distFromCenter*0.25;
-		this.animationProgress = -distFromCenter*0.2;
+		this.animationProgress = -distFromCenter*0.3;
 	}
 
 	tick (delta) {
